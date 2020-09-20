@@ -125,5 +125,6 @@ def k(args):
     dot += '}'
     print(dot)
 
-    with subprocess.Popen(['dot', '-Tgtk', '/dev/stdin'], stdin=subprocess.PIPE) as proc:
-        proc.communicate(dot.encode())
+    with open('graph.jpg', 'w') as outfile:
+        with subprocess.Popen(['dot', '-Tjpg', '/dev/stdin'], stdin=subprocess.PIPE, stdout=outfile) as proc:
+            proc.communicate(dot.encode())
