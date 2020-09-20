@@ -31,7 +31,7 @@ def parse_args():
     cat_file_parser.set_defaults(func=cat_file)
     cat_file_parser.add_argument("object", type=oid)
 
-    write_tree_parser = commands.add_parser('write-tree')
+    write_tree_parser = commands.add_parser("write-tree")
     write_tree_parser.set_defaults(func=write_tree)
 
     read_tree_parser = commands.add_parser("read-tree")
@@ -42,25 +42,25 @@ def parse_args():
     commit_parser.set_defaults(func=commit)
     commit_parser.add_argument("-m", "--message", required=True)
 
-    log_parser = commands.add_parser('log')
+    log_parser = commands.add_parser("log")
     log_parser.set_defaults(func=log)
-    log_parser.add_argument('oid', default='@', type=oid, nargs='?')
+    log_parser.add_argument("oid", default="@", type=oid, nargs="?")
 
-    checkout_parser = commands.add_parser('checkout')
+    checkout_parser = commands.add_parser("checkout")
     checkout_parser.set_defaults(func=checkout)
-    checkout_parser.add_argument('commit')
+    checkout_parser.add_argument("commit")
 
-    tag_parser = commands.add_parser('tag')
+    tag_parser = commands.add_parser("tag")
     tag_parser.set_defaults(func=tag)
-    tag_parser.add_argument('name')
-    tag_parser.add_argument('oid', default='@', type=oid, nargs='?')
+    tag_parser.add_argument("name")
+    tag_parser.add_argument("oid", default="@", type=oid, nargs="?")
 
-    branch_parser = commands.add_parser('branch')
+    branch_parser = commands.add_parser("branch")
     branch_parser.set_defaults(func=branch)
-    branch_parser.add_argument('name')
-    branch_parser.add_argument('start_point', default='@', type=oid, nargs='?')
+    branch_parser.add_argument("name")
+    branch_parser.add_argument("start_point", default="@", type=oid, nargs="?")
 
-    k_parser = commands.add_parser('k')
+    k_parser = commands.add_parser("k")
     k_parser.set_defaults(func=k)
 
     return parser.parse_args()
@@ -71,7 +71,7 @@ def init(args):
 
 
 def hash_object(args):
-    with open(args.file, 'rb') as f:
+    with open(args.file, "rb") as f:
         print(data.hash_object(f.read()))
 
 
@@ -96,9 +96,9 @@ def log(args):
     for oid in base.iter_commits_and_parents({args.oid}):
         commit = base.get_commit(oid)
 
-        print(f'commit {oid}\n')
-        print(textwrap.indent(commit.message, '    '))
-        print('')
+        print(f"commit {oid}\n")
+        print(textwrap.indent(commit.message, "    "))
+        print("")
 
 
 def checkout(args):
@@ -111,11 +111,11 @@ def tag(args):
 
 def branch(args):
     base.create_branch(args.name, args.start_point)
-    print(f'Branch {args.name} created at {args.start_point[:10]}')
+    print(f"Branch {args.name} created at {args.start_point[:10]}")
 
 
 def k(args):
-    dot = 'digraph commits{\n'
+    dot = "digraph commits{\n"
 
     oids = set()
     for refname, ref in data.iter_refs(deref=False):
@@ -130,9 +130,11 @@ def k(args):
         if commit.parent:
             dot += f'"{oid}" -> "{commit.parent}"\n'
 
-    dot += '}'
+    dot += "}"
     print(dot)
 
-    with open('graph.jpg', 'w') as outfile:
-        with subprocess.Popen(['dot', '-Tjpg', '/dev/stdin'], stdin=subprocess.PIPE, stdout=outfile) as proc:
+    with open("graph.jpg", "w") as outfile:
+        with subprocess.Popen(
+            ["dot", "-Tjpg", "/dev/stdin"], stdin=subprocess.PIPE, stdout=outfile
+        ) as proc:
             proc.communicate(dot.encode())
